@@ -1,14 +1,16 @@
 #!/usr/bin/env python
 
-import cv
-dims=(40,40)
+import cv, pickle
+dims=(17,17)
 c=cv.CaptureFromCAM(1)
 while True:
     f=cv.QueryFrame(c)
     grey=cv.CreateImage((640,480),8,1)
     cv.CvtColor(f,grey,cv.CV_BGR2GRAY)
-    found,points=cv.FindCirclesGrid(grey,dims)
+    found,points=cv.FindChessboardCorners(grey,dims)
     if found!=0:
         cv.DrawChessboardCorners(f,dims,points,found)
-        cv.ShowImage("win2",f)
-        cv.WaitKey(2)
+        cv.SaveImage("corners.png",f)
+        with open('points.dat','wb') as p:
+            pickle.dump(points,p)
+        break
